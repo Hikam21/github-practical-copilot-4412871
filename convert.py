@@ -26,7 +26,8 @@ def get_audio_files():
                 'description': comments,
                 'file': '/audio/' + file,
                 'duration': duration,
-                'length': size_str
+                'length': size_str,
+                'size': size_str  # Format the size field with a string with commas
             })
     return audio_files
 
@@ -34,6 +35,8 @@ def get_audio_files():
 def convert_to_yaml():
     data = get_audio_files()
     yaml_data = yaml.dump(data, sort_keys=False)
+    # Print the YAML data
+    print(yaml_data)
     # Write the YAML data to a file
     with open('episodes.yaml', 'w') as f:
         f.write(yaml_data)
