@@ -1,20 +1,18 @@
 import os
 import yaml
-import eyed3
+from mutagen.easyid3 import EasyID3
+from mutagen.mp3 import MP3
 
 def get_audio_files():
     audio_files = []
     for file in os.listdir('audio'):
         if file.endswith('.mp3'):
-            audio_file = eyed3.load(os.path.join('audio', file))
-            comments = ''
-            if audio_file.tag.comments:
-                for comment in audio_file.tag.comments:
-                    comments += comment.text + '\n'
+            file_path = os.path.join('audio', file)
+            audio = MP3(file_path, ID3=EasyID3)
+            comments = '\n'.join(audio.get('comment', []))
             audio_files.append({
-                'title': audio_file.tag.title,
-                'comments': comments,
-                'filename': '/audio/' + file
+                'title': audio.get('title', [''])[0],
+                'comments': comments
             })
     return audio_files
 
