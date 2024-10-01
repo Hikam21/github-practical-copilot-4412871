@@ -15,6 +15,8 @@ def get_audio_files():
                 'title': audio_file.tag.title,
                 'comments': comments
             })
-    return audio_files
+    
+    # Print the results in YAML format
+    print(yaml.dump(audio_files, default_flow_style=False))
 
-print(yaml.dump(get_audio_files()))
+get_audio_files()
