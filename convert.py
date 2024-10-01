@@ -1,12 +1,9 @@
 import os
 
-# Create a function that reads audio files in the mp3 format from 
-# the 'audio' directory and returns a list of them.
-def get_audio_files():
-    audio_files = []
-    for file in os.listdir('audio'):
-        if file.endswith('.mp3'):
-            audio_files.append(file)
+# Create a function that reads audio files in the mp3 format from
+# the 'audio' directory and list them
+def list_files():
+    audio_files = [f for f in os.listdir('audio') if f.endswith('.mp3')]
     return audio_files
 
-print(get_audio_files())
+print(list_files())
