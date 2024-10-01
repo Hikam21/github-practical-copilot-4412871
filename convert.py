@@ -1,24 +1,35 @@
 import os
 import yaml
-import eyed3
-import time
+from mutagen.mp3 import MP3
+
+def format_duration(seconds):
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    seconds = int(seconds % 60)
+    return f"{hours:02}:{minutes:02}:{seconds:02}"
 
 def get_audio_files():
     audio_files = []
-    for file in os.listdir('audio'):
+    audio_files_path = os.path.join(os.getcwd(), 'audio')
+    
+    if not os.path.exists(audio_files_path):
+        print(f"Directory not found: {audio_files_path}")
+        return audio_files
+
+    for file in os.listdir(audio_files_path):
         if file.endswith('.mp3'):
-            audio_file = eyed3.load(os.path.join('audio', file))
-            comments = ''
-            if audio_file.tag.comments:
-                for comment in audio_file.tag.comments:
-                    comments += comment.text + '\n'
-            duration = time.strftime('%H:%M:%S', time.gmtime(audio_file.info.time_secs))
-            audio_files.append({
-                'title': audio_file.tag.title,
-                'comments': comments,
-                'filename': '/audio/' + file,
-                'duration': duration
-            })
+            try:
+                audio_file = MP3(os.path.join(audio_files_path, file))
+                duration = format_duration(audio_file.info.length)
+                comments = audio_file.tags.getall('COMM') if audio_file.tags else []
+                audio_files.append({
+                    'title': audio_file.tags.get('TIT2', 'Unknown Title'),
+                    'comments': comments,
+                    'filename': os.path.join('/audio', file),
+                    'duration': duration
+                })
+            except Exception as e:
+                print(f"Error processing file {file}: {e}")
     return audio_files
 
 def convert_to_yaml():
